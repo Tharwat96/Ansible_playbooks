@@ -1,0 +1,18 @@
+---
+- hosts: aws
+  remote_user: ec2-user
+  become: true
+  pre_tasks:
+    - name: ensure gocd repository exists
+      yum_repository:
+        name: gocd
+        description: GoCD YUM Repository
+        baseurl: https://download.gocd.org
+        gpgkey: https://download.gocd.org/GOCD-GPG-KEY.asc
+    # - name: ensure gocd repository exists
+    #   get_url:
+    #     src: https://download.gocd.org/gocd.repo
+    #     dest: /etc/yum.repos.d/gocd.repo
+  roles:
+    - gocd-server
+    - gocd-agent

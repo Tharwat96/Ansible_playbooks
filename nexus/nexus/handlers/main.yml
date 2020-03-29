@@ -1,0 +1,14 @@
+---
+# handlers file for nexus
+- name: unarchive nexus tarball
+  unarchive:
+    src: /app/nexus.tar.gz
+    dest: /app/
+- name: copy unarchived file with different name
+  copy:
+    src: /app/nexus-3*
+    dest: /app/nexus
+- name: remove old file 
+  file: 
+    path: /app/nexus-3*
+    state: absent

@@ -1,0 +1,7 @@
+---
+# handlers file for gocd-server
+- name: ensure gocd server service is restarted
+  service:
+    name: go-server
+    state: started
+    enabled: yes

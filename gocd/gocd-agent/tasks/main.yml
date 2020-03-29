@@ -1,0 +1,9 @@
+---
+# tasks file for gocd-agent
+- name: ensure that go agent is latest
+  yum: 
+    update_cache: yes
+    name: go-agent
+    state: latest
+  notify: 
+    - ensure gocd agent service is restarted

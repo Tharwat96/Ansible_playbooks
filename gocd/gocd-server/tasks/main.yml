@@ -1,0 +1,9 @@
+---
+# tasks file for gocd-server
+- name: ensure gocd server is latest
+  yum:
+    update_cache: yes 
+    name: go-server
+    state: latest
+  notify: 
+    - ensure gocd server service is restarted

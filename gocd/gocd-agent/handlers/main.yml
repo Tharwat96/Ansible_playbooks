@@ -1,0 +1,8 @@
+---
+# handlers file for gocd-agent
+- name: ensure gocd agent service is restarted
+  service:
+    name: go-agent
+    state: started
+    enabled: yes
+    use: service

@@ -1,0 +1,21 @@
+---
+- hosts: aws
+  remote_user: ec2-user
+  become: true
+  tasks: 
+  - name: ensure nginx is latest
+    yum:
+      name: nginx
+      state: latest
+  - name: stop apache service if enabled
+    service:
+      name: httpd
+      state: stopped
+  - name: start nginx
+    service: 
+      name: nginx
+      state: started
+  - name: copy new index page instead of nginx default
+    copy:
+      src: ./index.html
+      dest: /usr/share/nginx/html/index.html

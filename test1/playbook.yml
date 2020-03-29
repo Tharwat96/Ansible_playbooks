@@ -1,0 +1,13 @@
+---
+- hosts: aws
+  remote_user: ec2-user
+  become: true
+  tasks: 
+  - name: ensure apache is latest
+    yum:
+      name: httpd
+      state: latest
+  - name: start apache
+    service: 
+      name: httpd
+      state: started

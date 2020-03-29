@@ -1,0 +1,67 @@
+---
+# tasks file for nexus
+- name: ensure that openjdk8 is installed and updated
+  yum: 
+    name: java-1.8.0-openjdk
+    state: latest
+- name: create /app directory
+  file:
+    path: /app
+    state: directory
+# - name: get nexus pkg
+#   get_url:
+#     url: https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+#     dest: /app/nexus.tar.gz
+#   notify:
+    # - unarchive nexus tarball
+    # - copy unarchived file with different name
+    # - remove old file
+- name: ensure nexus user exists
+  user:
+    name: nexus
+- name: unarchive downloaded nexus tarball
+  unarchive:
+    src: "https://download.sonatype.com/nexus/3/latest-unix.tar.gz"
+    dest: /app/
+    remote_src: true
+- name: get directory name
+  shell: ls | grep nexus-3*
+  args:
+    chdir: /app
+  register: output
+- name: output of last step [DEBUG]
+  debug: 
+    var: output
+- name: copy unarchived file with different name
+  copy:
+    src: /app/{{ output.stdout }}/
+    dest: /app/nexus
+    remote_src: yes
+- name: remove old dir 
+  file: 
+    path: /app/{{ output.stdout }}
+    state: absent
+- name: ensure that nexus is the owner of nexus and sonatype
+  file:
+    path: /app/
+    owner: nexus
+    group: nexus
+    recurse: yes
+- name: uncommenting run as user to allow nexus to use its user instead of root
+  lineinfile: 
+    dest: /app/nexus/bin/nexus.rc
+    regexp: '^(.*)#run_as_user=(.*)$' 
+    line: 'run_as_user="nexus"'
+    backrefs: yes
+- name: Put SELinux in permissive mode, logging actions that would be blocked.
+  selinux:
+    policy: targeted
+    state: permissive
+- name: check that nexus systemd unit file exist.
+  copy:
+    src: nexus.service
+    dest: /etc/systemd/system/nexus.service
+- name: ensure that nexus service is started
+  service:
+    name: nexus
+    state: started
